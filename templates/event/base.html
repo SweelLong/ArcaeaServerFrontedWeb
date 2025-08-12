@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} - Arkana半周年庆典</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='event.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body class="font-serif bg-starry text-cream overflow-x-hidden">
+    <div id="particles" class="absolute inset-0 w-full h-full pointer-events-none z-0"></div>
+    <div class="vines absolute inset-0 w-full h-full pointer-events-none z-0"></div>
+    <header id="header" class="site-header relative z-10 bg-starry/70 backdrop-blur-md border-b border-gold/30">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="{{ url_for('event.index') }}"
+                    class="group flex items-center gap-2 transition-all duration-500 hover:scale-110">
+                    <i
+                        class="fas fa-star text-gold text-xl group-hover:rotate-12 transition-transform duration-500"></i>
+                    <span class="text-cream text-xl font-serif tracking-wide">Arkana活动</span>
+                </a>
+            </div>
+            <nav class="main-nav">
+                <ul class="relative">
+                    <li><a href="{{ url_for('event.index') }}"
+                            class="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-gold after:transition-all after:duration-500 hover:after:w-full">首页</a>
+                    </li>
+                    <li><a href="{{ url_for('event.lottery') }}"
+                            class="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-gold after:transition-all after:duration-500 hover:after:w-full">抽奖</a>
+                    </li>
+                    <li><a href="{{ url_for('event.contribution') }}"
+                            class="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-gold after:transition-all after:duration-500 hover:after:w-full">投稿</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="user-actions">
+                {% if 'user_id' in session %}
+                <div class="user-info flex items-center gap-4">
+                    <span class="text-cream/90 hover:text-gold transition-colors duration-300">欢迎，{{ session.username
+                        }}</span>
+                    <a href="{{ url_for('event.logout') }}"
+                        class="btn btn-logout ornament-border group relative px-4 py-1.5 transition-all duration-500 hover:bg-starry/80">
+                        <span></span>
+                        <i
+                            class="fa fa-sign-out-alt mr-1 text-gold group-hover:rotate-12 transition-transform duration-500"></i>
+                        退出
+                    </a>
+                </div>
+                {% else %}
+                <a href="{{ url_for('event.login') }}"
+                    class="btn btn-login ornament-border group relative px-6 py-1.5 transition-all duration-500 hover:bg-starry/80">
+                    <span></span>
+                    <i
+                        class="fa fa-sign-in-alt mr-1 text-gold group-hover:rotate-12 transition-transform duration-500"></i>
+                    登录
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-gold to-transparent z-10"></div>
+    <main>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash-messages max-w-4xl mx-auto px-4 py-6">
+            {% for message in messages %}
+            <div class="flash-message bg-floral/40 border border-gold/30 text-cream/90 p-4 rounded-sm mb-3 fade-in">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+    <footer id="footer" class="site-footer relative z-10 bg-starry/80 backdrop-blur-md border-t border-gold/30 mt-auto">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-gold to-transparent"></div>
+        <div class="container footer-container py-8">
+            <div class="footer-info mb-6">
+                <p class="text-cream/70 mb-2">Copyright © 2025 Swiro. All rights reserved.</p>
+                <p class="text-cream/50 text-sm">本活动仅为 Arkana 半周年庆典 提供</p>
+            </div>
+            <div class="footer-links flex gap-6 justify-center">
+                <a href="https://im.qq.com"
+                    class="text-cream/70 hover:text-gold transition-colors duration-300 hover:scale-125 transform transition-transform">
+                    <i class="fab fa-qq text-xl"></i>
+                </a>
+                <a href="https://github.com/SweelLong"
+                    class="text-cream/70 hover:text-gold transition-colors duration-300 hover:scale-125 transform transition-transform">
+                    <i class="fab fa-github text-xl"></i>
+                </a>
+                <a href="https://space.bilibili.com/677414571"
+                    class="text-cream/70 hover:text-gold transition-colors duration-300 hover:scale-125 transform transition-transform">
+                    <i class="fab fa-bilibili text-xl"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            if (!particlesContainer) return;
+            const baseCount = window.innerWidth < 768 ? 300 : 600;
+            const particleCount = baseCount + Math.floor(Math.random() * 100);
+            particlesContainer.innerHTML = '';
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const randomType = Math.random();
+                if (randomType > 0.8) {
+                    particle.classList.add('star');
+                } else if (randomType > 0.6) {
+                    particle.classList.add('flower');
+                } else if (randomType > 0.4) {
+                    particle.classList.add('sparkle');
+                } else if (randomType > 0.2) {
+                    particle.classList.add('diamond');
+                } else {
+                    particle.classList.add('confetti');
+                    const colors = [
+                        'rgba(212, 175, 55, 0.7)',
+                        'rgba(90, 43, 88, 0.7)',
+                        'rgba(255, 253, 208, 0.7)',
+                        'rgba(128, 0, 32, 0.7)'
+                    ];
+                    particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                }
+                const size = Math.random() * 12 + 1;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                const startX = Math.random() * 100;
+                const startY = Math.random() * 100;
+                particle.style.left = `${startX}%`;
+                particle.style.top = `${startY}%`;
+                const duration = Math.random() * 60 + 20;
+                const scale = Math.random() * 0.8 + 0.5;
+                const startOpacity = Math.random() * 0.8 + 0.2;
+                const xOffset = (Math.random() - 0.5) * 300;
+                const yOffset = (Math.random() - 0.5) * 200;
+                particle.style.setProperty('--duration', `${duration}s`);
+                particle.style.setProperty('--scale', scale);
+                particle.style.setProperty('--start-opacity', startOpacity);
+                particle.style.setProperty('--x-offset', `${xOffset}px`);
+                particle.style.setProperty('--y-offset', `${yOffset}px`);
+                particle.style.setProperty('--x-start', `${startX * window.innerWidth / 100}px`);
+                particle.style.setProperty('--y-start', `${startY * window.innerHeight / 100}px`);
+                particle.style.animation = Math.random() > 0.5
+                    ? `float ${duration}s linear infinite`
+                    : `floatRandom ${duration}s ease-in-out infinite`;
+                particle.style.animationDelay = `${Math.random() * 15}s`;
+                particlesContainer.appendChild(particle);
+            }
+        }
+        function initParticleInteraction() {
+            const particles = document.querySelectorAll('.particle');
+            let mouseX = 0;
+            let mouseY = 0;
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+            function updateParticles() {
+                particles.forEach(particle => {
+                    const rect = particle.getBoundingClientRect();
+                    const particleX = rect.left + rect.width / 2;
+                    const particleY = rect.top + rect.height / 2;
+                    const distance = Math.sqrt(Math.pow(mouseX - particleX, 2) + Math.pow(mouseY - particleY, 2));
+                    if (distance < 150) {
+                        const force = 1 - distance / 150;
+                        const angle = Math.atan2(mouseY - particleY, mouseX - particleX);
+                        const moveX = Math.cos(angle) * force * 20;
+                        const moveY = Math.sin(angle) * force * 20;
+                        particle.style.transform = `translate(${moveX}px, ${moveY}px) ${particle.style.transform.split('translate')[1] || ''}`;
+                        particle.style.opacity = Math.min(1, startOpacity + force * 0.5);
+                    }
+                });
+                requestAnimationFrame(updateParticles);
+            }
+            updateParticles();
+        }
+        function handleScrollAnimations() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+        window.addEventListener('load', () => {
+            createParticles();
+            handleScrollAnimations();
+            initParticleInteraction();
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('bg-starry/90');
+                    header.classList.remove('bg-starry/70');
+                } else {
+                    header.classList.add('bg-starry/70');
+                    header.classList.remove('bg-starry/90');
+                }
+                handleScrollAnimations();
+            });
+        });
+        window.addEventListener('resize', createParticles);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+{% extends 'userbase.html' %}
+{% block rebuildmaincontent %}
+<style>
+    /* 保持原有样式，仅修改和添加与全屏查看相关的部分 */
+
+    .count {
+        color: #666;
+        font-size: 0.9rem;
+        font-weight: normal;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .images-grid {
+        padding: 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .image-card {
+        border-radius: 6px;
+        overflow: hidden;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .image-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .thumbnail-container {
+        width: 100%;
+        height: 150px;
+        overflow: hidden;
+        background: #f1f1f1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .thumbnail {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .image-card:hover .thumbnail {
+        transform: scale(1.05);
+    }
+
+    .image-info {
+        padding: 12px;
+        background: white;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .image-info p:first-child {
+        font-weight: 500;
+        margin-bottom: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .image-info p:last-child {
+        color: #666;
+        font-size: 0.8rem;
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .no-textures {
+        text-align: center;
+        padding: 40px 20px;
+        color: #666;
+    }
+
+    .no-textures i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: #ccc;
+    }
+
+    /* 改进的全屏查看器样式 */
+    #viewer {
+        position: fixed;
+        /* 改为fixed确保全屏覆盖 */
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.95);
+        opacity: 0;
+        transition: opacity 0.3s;
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+        display: none;
+        backdrop-filter: blur(5px);
+    }
+
+    #viewer.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    #viewer-content {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    #fullscreen-img {
+        max-width: 100%;
+        max-height: 100%;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        cursor: grab;
+        object-fit: contain;
+        /* 确保图片完整显示 */
+    }
+
+    #fullscreen-img.grabbing {
+        cursor: grabbing;
+    }
+
+    #fullscreen-img.zoomed {
+        cursor: move;
+    }
+
+    /* 控制按钮样式 */
+    #viewer-controls {
+        position: absolute;
+        bottom: 20px;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        z-index: 10000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    #viewer:hover #viewer-controls {
+        opacity: 1;
+    }
+
+    .viewer-btn {
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        color: white;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 18px;
+    }
+
+    .viewer-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: scale(1.1);
+    }
+
+    #close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        z-index: 10000;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+    #close:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+    }
+
+    #caption {
+        color: white;
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        font-size: 1rem;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        max-width: calc(100% - 120px);
+        word-break: break-word;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 8px 12px;
+        border-radius: 4px;
+    }
+
+    /* 导航指示器 */
+    #navigation-info {
+        position: absolute;
+        top: 50%;
+        left: 20px;
+        color: white;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+
+    /* 加载动画 */
+    .loader {
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top: 3px solid white;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        position: absolute;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* 左右导航箭头 */
+    .nav-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 60px;
+        height: 100px;
+        background: rgba(0, 0, 0, 0.3);
+        color: white;
+        border: none;
+        font-size: 30px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        z-index: 9999;
+    }
+
+    .nav-arrow:hover {
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    #prev-btn {
+        left: 0;
+    }
+
+    #next-btn {
+        right: 0;
+    }
+</style>
+<div class="container content-area" style="min-height: 100vh;">
+    <header class="section-header">
+        <h1>{% block title %}高清材质展览{% endblock %}</h1>
+        <p class="logo">在这里，您可以查看高清材质。点击缩略图查看原始大图！</p>
+    </header>
+    <h2 class="section-title">按材质提供者分区</h2>
+    {% for message in get_flashed_messages() %}
+    <div class="flash-message">{{ message }}</div>
+    {% endfor %}
+
+    {% if providers %}
+    {% for provider in providers %}
+    <details class="card">
+        <summary>
+            <span>{{ provider.name }}</span>
+            <span class="count"><i class="fas fa-image"></i> {{ provider.image_count }} 张图片</span>
+        </summary>
+
+        <div class="images-grid">
+            {% for image in provider.images %}
+            <div class="image-card" data-filename="{{ image.filename }}" data-provider="{{ provider.name }}"
+                data-size="{{ image.size }}" data-original="{{ image.url }}">
+                <div class="thumbnail-container">
+                    <img src="{{ image.url }}" alt="{{ image.filename }}" class="thumbnail" loading="lazy">
+                </div>
+                <div class="image-info">
+                    <p>{{ image.filename }}</p>
+                    <p><i class="fas fa-hdd"></i> {{ image.size }}</p>
+                </div>
+            </div>
+            {% else %}
+            <p>该提供者暂无图片</p>
+            {% endfor %}
+        </div>
+    </details>
+    {% endfor %}
+    {% else %}
+    <div class="no-textures card">
+        <i class="fas fa-images"></i>
+        <p>暂无任何材质资源</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- 改进的全屏查看器结构 -->
+<div id="viewer">
+    <button id="close" aria-label="关闭">✕</button>
+    <div id="caption"></div>
+    <div id="navigation-info"></div>
+
+    <button class="nav-arrow" id="prev-btn" aria-label="上一张">←</button>
+    <button class="nav-arrow" id="next-btn" aria-label="下一张">→</button>
+
+    <div id="viewer-content">
+        <img id="fullscreen-img" alt="大图">
+        <div class="loader" style="display: none;"></div>
+    </div>
+
+    <div id="viewer-controls">
+        <button class="viewer-btn" id="zoom-out" aria-label="缩小">−</button>
+        <button class="viewer-btn" id="zoom-reset" aria-label="重置缩放">⟲</button>
+        <button class="viewer-btn" id="zoom-in" aria-label="放大">+</button>
+        <button class="viewer-btn" id="fit-screen" aria-label="适应屏幕">⟷</button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 获取DOM元素
+        const cards = document.querySelectorAll('.image-card'),
+            viewer = document.getElementById('viewer'),
+            viewerContent = document.getElementById('viewer-content'),
+            img = document.getElementById('fullscreen-img'),
+            caption = document.getElementById('caption'),
+            closeBtn = document.getElementById('close'),
+            prevBtn = document.getElementById('prev-btn'),
+            nextBtn = document.getElementById('next-btn'),
+            zoomInBtn = document.getElementById('zoom-in'),
+            zoomOutBtn = document.getElementById('zoom-out'),
+            zoomResetBtn = document.getElementById('zoom-reset'),
+            fitScreenBtn = document.getElementById('fit-screen'),
+            navigationInfo = document.getElementById('navigation-info'),
+            loader = document.querySelector('.loader');
+
+        // 存储当前图片索引和所有图片信息，用于导航
+        let currentImageIndex = 0;
+        const allImages = [];
+        let scale = 1;
+        let translateX = 0;
+        let translateY = 0;
+        let isDragging = false;
+        let startX, startY;
+        let initialTranslateX, initialTranslateY;
+
+        // 收集所有图片信息
+        cards.forEach((card, index) => {
+            allImages.push({
+                url: card.dataset.original,
+                filename: card.dataset.filename,
+                provider: card.dataset.provider,
+                size: card.dataset.size
+            });
+
+            // 为每张图片添加点击事件
+            card.addEventListener('click', () => {
+                currentImageIndex = index;
+                openImageViewer(allImages[index]);
+            });
+        });
+
+        // 打开图片查看器
+        function openImageViewer(image) {
+            // 重置图片状态
+            resetImageTransform();
+            showLoader();
+            img.src = '';
+            updateNavigationInfo();
+            caption.textContent = `${image.provider} / ${image.filename} (${image.size})`;
+
+            // 显示查看器
+            viewer.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            // 图片加载完成处理
+            img.onload = () => {
+                hideLoader();
+            };
+
+            // 图片加载失败处理
+            img.onerror = () => {
+                hideLoader();
+                caption.textContent = `图片加载失败: ${image.filename}`;
+            };
+
+            // 设置图片源
+            img.src = image.url;
+        }
+
+        // 关闭图片查看器
+        function closeViewer() {
+            viewer.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 导航到下一张图片
+        function nextImage() {
+            if (allImages.length === 0) return;
+            currentImageIndex = (currentImageIndex + 1) % allImages.length;
+            openImageViewer(allImages[currentImageIndex]);
+        }
+
+        // 导航到上一张图片
+        function prevImage() {
+            if (allImages.length === 0) return;
+            currentImageIndex = (currentImageIndex - 1 + allImages.length) % allImages.length;
+            openImageViewer(allImages[currentImageIndex]);
+        }
+
+        // 更新导航信息
+        function updateNavigationInfo() {
+            navigationInfo.textContent = `${currentImageIndex + 1} / ${allImages.length}`;
+        }
+
+        // 显示加载动画
+        function showLoader() {
+            loader.style.display = 'block';
+        }
+
+        // 隐藏加载动画
+        function hideLoader() {
+            loader.style.display = 'none';
+        }
+
+        // 图片缩放功能
+        function zoomImage(delta) {
+            // 限制缩放范围
+            const newScale = Math.max(0.1, Math.min(scale + delta, 10));
+            if (newScale !== scale) {
+                scale = newScale;
+                applyImageTransform();
+            }
+        }
+
+        // 重置图片变换
+        function resetImageTransform() {
+            scale = 1;
+            translateX = 0;
+            translateY = 0;
+            applyImageTransform();
+        }
+
+        // 适应屏幕
+        function fitScreen() {
+            scale = 1;
+            translateX = 0;
+            translateY = 0;
+            applyImageTransform();
+        }
+
+        // 应用图片变换
+        function applyImageTransform() {
+            img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+
+            // 根据缩放状态更新类名
+            if (scale !== 1) {
+                img.classList.add('zoomed');
+            } else {
+                img.classList.remove('zoomed');
+            }
+        }
+
+        // 拖拽相关函数
+        function startDrag(e) {
+            if (scale === 1) return; // 只有缩放后才能拖拽
+
+            isDragging = true;
+            img.classList.add('grabbing');
+
+            // 获取鼠标或触摸的起始位置
+            if (e.type === 'mousedown') {
+                startX = e.clientX;
+                startY = e.clientY;
+            } else {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            }
+
+            initialTranslateX = translateX;
+            initialTranslateY = translateY;
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+
+            // 防止默认行为（如图片拖动）
+            e.preventDefault();
+
+            // 计算当前位置
+            let currentX, currentY;
+            if (e.type === 'mousemove') {
+                currentX = e.clientX;
+                currentY = e.clientY;
+            } else {
+                currentX = e.touches[0].clientX;
+                currentY = e.touches[0].clientY;
+            }
+
+            // 计算位移
+            translateX = initialTranslateX + (currentX - startX);
+            translateY = initialTranslateY + (currentY - startY);
+
+            applyImageTransform();
+        }
+
+        function endDrag() {
+            isDragging = false;
+            img.classList.remove('grabbing');
+        }
+
+        // 事件监听
+        closeBtn.addEventListener('click', closeViewer);
+
+        // 导航按钮
+        prevBtn.addEventListener('click', prevImage);
+        nextBtn.addEventListener('click', nextImage);
+
+        // 缩放控制
+        zoomInBtn.addEventListener('click', () => zoomImage(0.1));
+        zoomOutBtn.addEventListener('click', () => zoomImage(-0.1));
+        zoomResetBtn.addEventListener('click', resetImageTransform);
+        fitScreenBtn.addEventListener('click', fitScreen);
+
+        // 点击查看器背景关闭
+        viewer.addEventListener('click', e => {
+            if (e.target === viewer) closeViewer();
+        });
+
+        // 点击图片切换到下一张
+        img.addEventListener('click', e => {
+            // 如果不是拖拽状态，点击图片才会切换到下一张
+            if (!isDragging) {
+                nextImage();
+            }
+        });
+
+        // 拖拽相关事件
+        img.addEventListener('mousedown', startDrag);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', endDrag);
+        document.addEventListener('mouseleave', endDrag);
+
+        // 触摸设备支持
+        img.addEventListener('touchstart', startDrag);
+        document.addEventListener('touchmove', drag);
+        document.addEventListener('touchend', endDrag);
+
+        // 键盘导航
+        document.addEventListener('keydown', e => {
+            if (!viewer.classList.contains('active')) return;
+
+            switch (e.key) {
+                case 'Escape':
+                    closeViewer();
+                    break;
+                case 'ArrowRight':
+                    nextImage();
+                    break;
+                case 'ArrowLeft':
+                    prevImage();
+                    break;
+                case '+':
+                case '=':
+                    zoomImage(0.1);
+                    break;
+                case '-':
+                    zoomImage(-0.1);
+                    break;
+                case '0':
+                    resetImageTransform();
+                    break;
+                case ' ':
+                case 'Enter':
+                    nextImage();
+                    break;
+            }
+        });
+
+        // 鼠标滚轮缩放
+        viewerContent.addEventListener('wheel', e => {
+            e.preventDefault();
+            // 滚轮 delta 值可能为正或负，取决于浏览器
+            const delta = e.deltaY < 0 ? 0.1 : -0.1;
+            zoomImage(delta);
+        });
+
+        // 窗口大小改变时重新适应屏幕
+        window.addEventListener('resize', () => {
+            if (viewer.classList.contains('active') && scale === 1) {
+                fitScreen();
+            }
+        });
+    });
+</script>
+{% endblock %}

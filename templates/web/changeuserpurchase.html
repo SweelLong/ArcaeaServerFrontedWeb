@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block header %}
+<h1>{% block title %}用户购买信息修改{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<form action="/web/changeuserpurchase/edituser" method="post">
+    <div class="title"><strong>编辑玩家</strong></div>
+    <label for="name">玩家用户名</label>
+    <input type="text" name="name" id="name">
+    <label for="user_code">玩家好友码</label>
+    <input type="text" name="user_code" id="user_code">
+    <p>二选一即可</p>
+    <br>
+    <br>
+
+    <div>对所有单曲和曲包的操作
+        <br>
+        <br>
+        <label><input type="radio" name="method" value="0">解锁</label>
+        <br>
+        <label><input type="radio" name="method" value="1">封锁</label>
+    </div>
+    <br>
+    <input type="submit" value="执行">
+</form>
+<br>
+<hr>
+<form action="/web/changeuserpurchase/edituser" method="post">
+    <div class="title">编辑所有玩家</div>
+    <br>
+    <div>对所有单曲和曲包的操作
+        <br>
+        <br>
+        <label><input type="radio" name="method" value="0">解锁</label>
+        <br>
+        <label><input type="radio" name="method" value="1">封锁</label>
+    </div>
+    <br>
+    <input type="submit" value="执行">
+</form>
+{% endblock %}

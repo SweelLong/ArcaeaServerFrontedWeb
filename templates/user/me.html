@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+{% extends 'userbase.html' %}
+
+{% block rebuildmaincontent %}
+<main class="container content-area" style="min-height: 100vh;">
+    <style>
+        .banner-preview {
+            margin: 15px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .banner-image {
+            max-width: 300px;
+            max-height: 200px;
+            object-fit: contain;
+        }
+
+        .profile-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+            box-sizing: border-box;
+        }
+
+        details {
+            width: 100%;
+            box-sizing: border-box;
+            margin: 15px 0;
+            padding: 0;
+        }
+
+        summary {
+            margin: 0.5rem 0;
+            width: 100%;
+            background: #f5f5f5;
+            border-radius: 4px;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        .products-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .product {
+            position: relative;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+
+        .auth-form-container {
+            margin: 20px auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+    </style>
+    <header class="section-header">
+        <h1>{% block title %}个人中心{% endblock %}</h1>
+        <p class="logo">这里记录着你的秘境探索历程与个人印记...</p>
+    </header>
+    <div class="profile-container">
+        {% for message in get_flashed_messages() %}
+        <div class="flash-message">{{ message }}</div>
+        {% endfor %}
+        {% if not user %}
+        <div class="auth-form-container">
+            <form method="post" class="auth-form">
+                <h2 class="section-title">身份认证</h2>
+                <div class="form-group">
+                    <label for="username">秘境代号(用户名)：</label>
+                    <input type="text" name="username" id="username" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="tmpkey">次元请柬(临时密钥)：</label>
+                    <input type="password" name="tmpkey" id="tmpkey" required class="form-control">
+                </div>
+                <input type="submit" value="确认身份" class="btn">
+            </form>
+        </div>
+        {% else %}
+        <div class="profile-card">
+            <h2 class="section-title">个人资料</h2>
+            <ul class="profile-info">
+                <li>
+                    <span class="info-label">编号</span>
+                    <span class="info-value">{{ user['user_id'] }}</span>
+                </li>
+                <li>
+                    <span class="info-label">用户名</span>
+                    <span class="info-value">{{ user['name'] }}</span>
+                </li>
+                <li>
+                    <span class="info-label">好友码</span>
+                    <span class="info-value">{{ user['user_code'] }}</span>
+                </li>
+                <li>
+                    <span class="info-label">潜力值</span>
+                    <span class="info-value">{{ "%.2f"|format(user['rating_ptt'] / 100) }}</span>
+                </li>
+                <li>
+                    <span class="info-label">虚实构想</span>
+                    <span class="info-value">{{ user['ticket'] }}</span>
+                </li>
+                <li>
+                    <span class="info-label">注册时间</span>
+                    <span class="info-value timestamp" data-timestamp="{{ user['join_date'] }}">
+                        {{ user['join_date'] }}
+                    </span>
+                </li>
+                <li>
+                    <span class="info-label">最近游玩时间</span>
+                    <span class="info-value timestamp" data-timestamp="{{ user['time_played'] }}">
+                        {{ user['time_played'] }}
+                    </span>
+                </li>
+            </ul>
+        </div>
+        <div class="auth-form-container">
+            <h2 class="section-title">游戏商城</h2>
+            <details>
+                <summary>常驻商品</summary>
+                <div id="permanent-products" class="products-container">
+                    <!-- 常驻商品将在这里显示 -->
+                </div>
+            </details>
+            <details>
+                <summary>活动商品</summary>
+                <div id="event-products" class="products-container">
+                    <!-- 活动商品将在这里显示 -->
+                </div>
+            </details>
+        </div>
+        <div class="auth-form-container">
+            <h2 class="section-title">改名卡</h2>
+            <form method="post" class="auth-form">
+                <input type="hidden" name="action" value="change_username">
+                <div class="form-group">
+                    <label><strong>新的名称</strong></label>
+                    <label>
+                        <p>花费648枚虚实构想即可购买<br>频繁改名可能会导致未知问题<br>请谨慎使用改名卡</p>
+                    </label>
+                    <input type="new_username" name="new_username" id="new_username" required class="form-control">
+                </div>
+                <input type="submit" value="购买" class="btn">
+            </form>
+        </div>
+        <div class="auth-form-container">
+            <h2 class="section-title">破产申请</h2>
+            <form method="post" class="auth-form">
+                <input type="hidden" name="action" value="bankrupt">
+                <div class="form-group">
+                    <label><strong>申请破产</strong></label>
+                    <label>
+                        <p>花费1000个残片即可购买<br>将以礼物的形式发放<br>先领取-1000个残片<br>领取后才能得到补助</p>
+                    </label>
+                </div>
+                <input type="submit" value="立即申请" class="btn">
+            </form>
+        </div>
+        <div class="auth-form-container">
+            <h2 class="section-title">残片兑换</h2>
+            <form method="post" class="auth-form">
+                <input type="hidden" name="action" value="fragment_exchange">
+                <div class="form-group">
+                    <label><strong>残片兑换</strong></label>
+                    <input type="number" name="fragments" id="fragments" required class="form-control">
+                    <label>
+                        <p>虚实构想等额兑换残片<br>将以礼物的形式发放</p>
+                    </label>
+                </div>
+                <input type="submit" value="立即兑换" class="btn">
+            </form>
+        </div>
+        <div class="auth-form-container">
+            <h2 class="section-title">修改密码</h2>
+            <form method="post" class="auth-form">
+                <input type="hidden" name="action" value="change_password">
+                <div class="form-group">
+                    <label for="new_password">新密码：</label>
+                    <input type="password" name="new_password" id="new_password" required class="form-control"
+                        minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">确认新密码：</label>
+                    <input type="password" name="confirm_password" id="confirm_password" required class="form-control">
+                </div>
+                <input type="submit" value="保存新密码" class="btn">
+            </form>
+        </div>
+        <div class="auth-form-container">
+            <h2 class="section-title">段位框设置</h2>
+            <form method="post" class="auth-form">
+                <input type="hidden" name="action" value="update_banner">
+                <div class="form-group">
+                    <label for="banner_id">选择段位框：</label>
+                    <select name="banner_id" id="banner_id" class="form-control">
+                        <option value="" selected>
+                            -- 请选择段位框 --
+                        </option>
+                        {% for item in banner_items %}
+                        {% set banner_num = item.split('_')[-1] if '_' in item else item %}
+                        <option value="{{ item }}" {% if selected_banner==item %}selected{% endif %}>
+                            段位框 {{ banner_num }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- 图片预览区域 -->
+                <div class="form-group">
+                    <label>预览：</label>
+                    <div id="banner-preview" class="banner-preview">
+                        {% if selected_banner %}
+                        <img src="{{ url_for('static', filename='course/banner/' ~ selected_banner) }}" alt="段位框预览"
+                            class="banner-image">
+                        {% else %}
+                        <p>请选择一个段位框查看预览</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <input type="submit" value="保存选择" class="btn">
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</main>
+
+<!-- 弹窗容器 -->
+<div id="modal-container">
+    <div id="modal-content"></div>
+</div>
+<script>
+    // 商品数据
+    const products = JSON.parse('{{ products|tojson|safe }}');
+    //const products = {{ products|tojson }};
+    let currentProductId = null;
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', function () {
+        renderProducts();
+        setupEventListeners();
+        // 初始化弹窗容器样式
+        initModalStyle();
+    });
+
+    // 初始化弹窗容器基础样式
+    function initModalStyle() {
+        const modalContainer = document.getElementById('modal-container');
+        // 若已有容器则应用样式
+        modalContainer.style.cssText = `
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1000;
+                justify-content: center;
+                align-items: center;
+                padding: 1rem;
+                animation: fadeIn 0.3s ease;
+            `;
+        const modalContent = document.getElementById('modal-content');
+        modalContent.className = 'card';
+        modalContent.style.maxWidth = '500px';
+        modalContent.style.width = '100%';
+        modalContent.style.animation = 'fadeInUp 0.5s ease';
+
+    }
+
+    // 渲染商品到对应分类
+    function renderProducts() {
+        const categories = {
+            'permanent': document.getElementById('permanent-products'),
+            'event': document.getElementById('event-products')
+        };
+
+        // 为分类容器添加样式（仅添加类名，不设置inline宽度）
+        Object.values(categories).forEach(container => {
+            container.classList.add('products-container');
+            // 移除可能存在的inline样式，避免冲突
+            container.style.maxWidth = 'none';
+            container.style.width = '100%';
+        });
+
+        // 以下代码保持不变（渲染商品元素）
+        products.forEach((product, index) => {
+            const productElement = createProductElement(product);
+            productElement.style.opacity = '0';
+            productElement.style.transform = 'translateY(20px)';
+            productElement.style.animation = `fadeInUp 0.5s ease forwards ${0.1 * index}s`;
+            categories[product.category].appendChild(productElement);
+            updateProductStock(product.id, product.stock);
+        });
+    }
+
+    // 创建商品元素（使用CSS中的卡片样式）
+    function createProductElement(product) {
+        const div = document.createElement('div');
+        div.className = 'card product'; // 复用卡片基础样式
+        div.style.margin = '1rem 0';
+        div.style.transition = 'var(--transition)';
+        div.setAttribute('data-id', product.id);
+        // 商品内容结构
+        div.innerHTML = `
+            <img src="/static/me/store/${product.img_path}.png" alt="${product.name}" style="width: 100%; height: 200px; object-fit: cover;" />
+            <h3 style="margin-bottom: 0.8rem; color: #333; font-size: 1.2rem;">${product.name}</h3>
+            <p style="margin-bottom: 0.6rem; color: #666;">${product.description}</p>
+            <p style="margin-bottom: 0.4rem; color: #444;"><strong>价格:</strong> ${product.price}枚</p>
+            ${(product.stock != -1) ?
+                `<p style="margin-bottom: 0.4rem; color: #444;"><strong>库存:</strong> ${product.stock}个</p>`
+                :
+                `<p style="margin-bottom: 0.4rem; color: #444;"><strong>库存:</strong> 充足</p>`
+            }
+            <p style="margin-bottom: 1rem; color: #444;"><strong>单次限购:</strong> ${product.limit}个</p>
+            <div style="display: flex; gap: 0.8rem; margin-top: 1rem;">
+                <button class="btn purchase-btn" data-id="${product.id}" style="flex: 1;">购买</button>
+                <button class="btn gift-btn" data-id="${product.id}" style="flex: 1; background: linear-gradient(135deg, var(--success), #2a8644);">赠送</button>
+            </div>
+        `;
+        // 商品卡片悬停效果
+        div.addEventListener('mouseenter', () => {
+            div.style.transform = 'translateY(-5px)';
+            div.style.boxShadow = 'var(--shadow-lg)';
+        });
+
+        div.addEventListener('mouseleave', () => {
+            div.style.transform = 'translateY(0)';
+            div.style.boxShadow = 'var(--shadow-md)';
+        });
+
+
+        return div;
+    }
+
+    // 设置事件监听器
+    function setupEventListeners() {
+        // 购买按钮点击事件
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('purchase-btn')) {
+                const productId = parseInt(e.target.getAttribute('data-id'));
+                currentProductId = productId;
+                openPurchaseModal(productId);
+            }
+        });
+
+        // 赠送按钮点击事件
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('gift-btn')) {
+                const productId = parseInt(e.target.getAttribute('data-id'));
+                currentProductId = productId;
+                openGiftModal(productId);
+            }
+        });
+
+        // 弹窗容器点击事件（关闭弹窗）
+        document.getElementById('modal-container').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    }
+
+    // 打开购买弹窗
+    function openPurchaseModal(productId) {
+        const product = products.find(p => p.id === productId);
+        if (!product) return;
+
+        const modalContent = document.getElementById('modal-content');
+        modalContent.innerHTML = `
+            <h3 style="margin-bottom: 1.2rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f0f0f0;">购买 ${product.name}</h3>
+            <p style="margin-bottom: 1rem; color: #666;"><strong>价格:</strong> ${product.price} 枚</p>
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="quantity" style="display: block; margin-bottom: 0.5rem; color: var(--dark-gray);">数量:</label>
+                <input type="number" id="quantity" class="form-control" 
+                       min="1" max="${product.limit}" value="1">
+            </div>
+            <p style="margin: 1rem 0; font-weight: 500;">总计: <span id="total-price">${product.price} 枚</span></p>
+            <div id="message" style="color: var(--danger); margin: 1rem 0; min-height: 24px;"></div>
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <button id="confirm-purchase" class="btn">确认购买</button>
+                <button id="cancel-purchase" class="btn" style="background: linear-gradient(135deg, var(--dark-gray), #333);">取消</button>
+            </div>
+        `;
+
+        // 数量变化事件（更新总价）
+        const quantityInput = document.getElementById('quantity');
+        quantityInput.addEventListener('change', function () {
+            const quantity = parseInt(this.value) || 1;
+            // 限制最大数量
+            if (quantity > (product.limit)) {
+                this.value = product.limit;
+                document.getElementById('message').textContent = `最多可购买${product.limit}个`;
+                return;
+            }
+            document.getElementById('total-price').textContent = quantity * product.price;
+            document.getElementById('message').textContent = '';
+        });
+
+        // 确认购买事件
+        document.getElementById('confirm-purchase').addEventListener('click', function () {
+            if (confirm('确认购买吗？')) {
+                const quantity = parseInt(document.getElementById('quantity').value) || 1;
+                submitPurchase(productId, quantity);
+            }
+        });
+
+        // 取消事件
+        document.getElementById('cancel-purchase').addEventListener('click', closeModal);
+
+        // 显示弹窗
+        document.getElementById('modal-container').style.display = 'flex';
+    }
+
+    // 提交购买请求到后端
+    function submitPurchase(productId, quantity) {
+        fetch('/purchase', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                quantity: quantity
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('message');
+                messageDiv.style.color = data.success ? 'var(--success)' : 'var(--danger)';
+                messageDiv.textContent = data.message;
+
+                if (data.success) {
+                    // 成功后禁用按钮防止重复提交
+                    document.getElementById('confirm-purchase').disabled = true;
+                    document.getElementById('confirm-purchase').style.opacity = '0.7';
+                    // 3秒后关闭弹窗
+                    setTimeout(closeModal, 2000);
+                    // 更新页面上的库存信息
+                    updateProductStock(productId, quantity);
+                    alert('购买成功：请手动刷新页面，提供表单则可以继续保持登陆状态！');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('message').textContent = '购买失败，请重试';
+            });
+    }
+
+    // 打开赠送弹窗（包含数量选择）
+    function openGiftModal(productId) {
+        const product = products.find(p => p.id === productId);
+        if (!product) return;
+
+        const modalContent = document.getElementById('modal-content');
+        modalContent.innerHTML = `
+        <h3 style="margin-bottom: 1.2rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f0f0f0;">赠送送 ${product.name}</h3>
+        <p style="margin-bottom: 1rem; color: #666;"><strong>价格:</strong> ${product.price} 枚/个</p>
+        
+        <!-- 数量选择 -->
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="gift-quantity" style="display: block; margin-bottom: 0.5rem; color: var(--dark-gray);">数量:</label>
+            <input type="number" id="gift-quantity" class="form-control" 
+                   min="1" max="${product.limit}" value="1">
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="recipient" style="display: block; margin-bottom: 0.5rem; color: var(--dark-gray);">接收者:</label>
+            <input type="text" id="recipient" class="form-control" placeholder="输入用户名搜索">
+            <div id="search-results" style="border: 1px solid var(--mid-gray); border-radius: var(--radius-md); max-height: 100px; overflow-y: auto; margin-top: 5px; background: white;"></div>
+        </div>
+        
+        <!-- 总价显示 -->
+        <p style="margin: 1rem 0; font-weight: 500;">总计: <span id="gift-total-price">${product.price} 枚</span></p>
+        
+        <div id="message" style="color: var(--danger); margin: 1rem 0; min-height: 24px;"></div>
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+            <button id="confirm-gift" class="btn" style="background: linear-gradient(135deg, var(--success), #2a8644);">确认赠送</button>
+            <button id="cancel-gift" class="btn" style="background: linear-gradient(135deg, var(--dark-gray), #333);">取消</button>
+        </div>
+    `;
+
+        // 数量变化事件（更新总价）
+        const quantityInput = document.getElementById('gift-quantity');
+        quantityInput.addEventListener('change', function () {
+            const quantity = parseInt(this.value) || 1;
+            // 限制最大数量
+            if (quantity > product.limit) {
+                this.value = product.limit;
+                document.getElementById('message').textContent = `最多可赠送${product.limit}个`;
+                return;
+            }
+            document.getElementById('gift-total-price').textContent = quantity * product.price + ' 枚';
+            document.getElementById('message').textContent = '';
+        });
+
+        // 搜索接收者逻辑
+        const recipientInput = document.getElementById('recipient');
+        recipientInput.addEventListener('input', function () {
+            const query = this.value.trim();
+            const resultsDiv = document.getElementById('search-results');
+
+            if (query.length < 2) {
+                resultsDiv.innerHTML = '';
+                return;
+            }
+
+            // 发送请求到后端搜索用户
+            fetch(`/search-users?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(users => {
+                    resultsDiv.innerHTML = '';
+                    if (users.length === 0) {
+                        resultsDiv.innerHTML = '<div style="padding: 8px; color: #666;">未找到用户</div>';
+                        return;
+                    }
+
+                    users.forEach(user => {
+                        const userDiv = document.createElement('div');
+                        userDiv.textContent = user.name;
+                        userDiv.style.padding = '8px';
+                        userDiv.style.cursor = 'pointer';
+                        userDiv.style.transition = 'var(--transition)';
+
+                        // 搜索结果项悬停效果
+                        userDiv.addEventListener('mouseenter', () => {
+                            userDiv.background = 'var(--primary-light)';
+                            userDiv.color = 'var(--primary)';
+                        });
+
+                        userDiv.addEventListener('click', function () {
+                            recipientInput.value = user.name;
+                            resultsDiv.innerHTML = '';
+                        });
+                        resultsDiv.appendChild(userDiv);
+                    });
+                });
+        });
+
+        // 确认赠送事件（获取数量参数）
+        document.getElementById('confirm-gift').addEventListener('click', function () {
+            const recipient = document.getElementById('recipient').value.trim();
+            const quantity = parseInt(document.getElementById('gift-quantity').value) || 1;
+
+            if (!recipient) {
+                document.getElementById('message').textContent = '请输入接收者用户名';
+                return;
+            }
+
+            submitGift(productId, recipient, quantity);
+        });
+
+        // 取消事件
+        document.getElementById('cancel-gift').addEventListener('click', closeModal);
+
+        // 显示弹窗
+        document.getElementById('modal-container').style.display = 'flex';
+    }
+
+    // 提交赠送请求（包含数量参数）
+    function submitGift(productId, recipient, quantity) {
+        fetch('/gift', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                recipient: recipient,
+                quantity: quantity  // 数量参数
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('message');
+                messageDiv.style.color = data.success ? 'var(--success)' : 'var(--danger)';
+                messageDiv.textContent = data.message;
+
+                if (data.success) {
+                    // 成功后禁用按钮防止重复提交
+                    document.getElementById('confirm-gift').disabled = true;
+                    document.getElementById('confirm-gift').style.opacity = '0.7';
+                    // 2秒后关闭弹窗
+                    setTimeout(closeModal, 2000);
+                    // 更新页面上的库存信息
+                    updateProductStock(productId, quantity);
+                    alert('赠送成功：请手动刷新页面，提供表单则可以继续保持登陆状态！');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('message').textContent = '赠送失败，请重试';
+            });
+    }
+
+
+    // 更新商品库存显示
+    function updateProductStock(productId, quantity) {
+        // 更新本地数据
+        const product = products.find(p => p.id === productId);
+
+        // 更新页面显示（带动画效果）
+        const productElement = document.querySelector(`.product[data-id="${productId}"]`);
+        if (productElement) {
+            const stockElement = productElement.querySelector('p:nth-child(4)');
+            if (stockElement) {
+                // 库存变化动画
+                stockElement.style.transition = 'all 0.3s ease';
+                stockElement.style.color = 'var(--primary)';
+
+                // 1秒后恢复原样式
+                setTimeout(() => {
+                    stockElement.style.color = '';
+                }, 1000);
+            }
+
+            // 若库存为0，禁用按钮
+            if (product.stock == 0) {
+                const buttons = productElement.querySelectorAll('button');
+                buttons.forEach(btn => {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+                    btn.style.cursor = 'not-allowed';
+                });
+                // 添加"已售罄"标识
+                const soldOut = document.createElement('div');
+                soldOut.textContent = '已售罄';
+                soldOut.style.position = 'absolute';
+                soldOut.style.top = '10px';
+                soldOut.style.right = '10px';
+                soldOut.style.background = 'var(--danger)';
+                soldOut.style.color = 'white';
+                soldOut.style.padding = '3px 8px';
+                soldOut.style.borderRadius = '4px';
+                soldOut.style.fontSize = '0.8rem';
+                productElement.appendChild(soldOut);
+            }
+        }
+    }
+
+    // 关闭弹窗（带动画）
+    function closeModal() {
+        const modalContainer = document.getElementById('modal-container');
+        const modalContent = document.getElementById('modal-content');
+
+        // 关闭动画
+        modalContent.style.animation = 'fadeInDown 0.3s ease forwards';
+        setTimeout(() => {
+            modalContainer.style.display = 'none';
+            modalContent.innerHTML = '';
+            modalContent.style.animation = ''; // 重置动画
+        }, 300);
+
+        currentProductId = null;
+    }
+
+    // 新增关闭弹窗动画（补充到全局动画）
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeInDown {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const formContainers = document.querySelectorAll('.auth-form-container');
+        const tabContainer = document.createElement('div');
+        tabContainer.className = 'form-tabs';
+        const style = document.createElement('style');
+        style.textContent = `
+        .form-tabs {
+            margin: 0 auto 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            max-width: 600px;
+            padding: 0 15px;
+        }
+        .form-tab {
+            padding: 8px 16px;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .form-tab.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .form-tab:hover:not(.active) {
+            background-color: #e0e0e0;
+        }
+    `;
+        document.head.appendChild(style);
+        formContainers.forEach((container, index) => {
+            const title = container.querySelector('.section-title').textContent;
+            const tabButton = document.createElement('button');
+            tabButton.className = `form-tab ${index === 0 ? 'active' : ''}`;
+            tabButton.textContent = title;
+            tabButton.addEventListener('click', () => {
+                formContainers.forEach(cont => cont.style.display = 'none');
+                document.querySelectorAll('.form-tab').forEach(btn => btn.classList.remove('active'));
+                container.style.display = 'flex';
+                tabButton.classList.add('active');
+            });
+            tabContainer.appendChild(tabButton);
+            if (index !== 0) {
+                container.style.display = 'none';
+            }
+        });
+        formContainers[0].parentNode.insertBefore(tabContainer, formContainers[0]);
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const timestampElements = document.querySelectorAll('.timestamp');
+        timestampElements.forEach(element => {
+            const timestamp = parseInt(element.getAttribute('data-timestamp'));
+            if (!isNaN(timestamp)) {
+                try {
+                    let unixTime = timestamp;
+                    if (timestamp.toString().length === 13) {
+                        unixTime = timestamp / 1000;
+                    }
+                    const date = new Date(unixTime * 1000);
+                    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')
+                        }-${date.getDate().toString().padStart(2, '0')
+                        } ${date.getHours().toString().padStart(2, '0')
+                        }:${date.getMinutes().toString().padStart(2, '0')
+                        }:${date.getSeconds().toString().padStart(2, '0')
+                        }`;
+                    element.textContent = formattedDate;
+                } catch (error) {
+                    console.error('时间戳转换失败:', error);
+                }
+            }
+        });
+    });
+    document.getElementById('banner_id').addEventListener('change', function () {
+        let selectedBanner = this.value;
+        if (selectedBanner.startsWith('_')) {
+            selectedBanner = selectedBanner.slice(1);
+        }
+        const previewContainer = document.getElementById('banner-preview');
+        const imageUrl = '/static/me/course/' + selectedBanner + '.png';
+        previewContainer.innerHTML = `<img src="${imageUrl}" alt="段位框 ${selectedBanner}" class="banner-image" style="max-width: 100%; max-height: 100%;">`;
+    });
+</script>
+{% endblock %}

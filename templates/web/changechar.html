@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block header %}
+<h1>{% block title %}角色修改{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<form action="/web/changesong/editchar" method="post">
+    <div class="title">编辑角色</div>
+    <label for="id">角色ID</label>
+    <input type="text" name="id" id="sid" required>
+
+    <label for="level">等级</label>
+    <input type="text" name="level" id="level">
+
+    <div>
+        <select name="skill_id">
+            <option value="">技能ID</option>
+            {% for skill_id in skill_ids %}
+            <option value="{{ skill_id }}">{{ skill_id }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <select name="skill_id_uncap">
+            <option value="">觉醒后的技能ID</option>
+            {% for skill_id in skill_ids %}
+            <option value="{{ skill_id }}">{{ skill_id }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <br />
+    <div class="content">如果某些不需要修改，留空即可</div>
+    <div class="content">更新时角色数据表不会同步</div>
+    <input type="submit" value="编辑">
+</form>
+<br />
+<hr />
+<form action="/web/changesong/updatechar" method="post">
+    <div class="title">更新角色</div>
+    <div class="content">更新所有用户拥有的角色</div>
+    <input type="submit" value="更新">
+</form>
+{% endblock %}

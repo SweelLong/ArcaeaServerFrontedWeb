@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block header %}
+<h1>{% block title %}兑换码 - {{code}}{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+{% if posts %}
+{% for user in posts %}
+
+<div id="user-info">
+    <div class="name">{{user['name']}}
+        <span class="rank">玩家ID: {{user['user_id']}}</span>
+        <span class="rank">玩家好友码: {{user['user_code']}}</span>
+    </div>
+</div>
+{% if not loop.last %}
+<br />
+{% endif %}
+{% endfor %}
+{% endif %}
+<br />
+<a href="{{ url_for('index.all_redeem') }}">返回</a>
+{% endblock %}

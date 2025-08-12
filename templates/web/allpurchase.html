@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block header %}
+<h1>{% block title %}购买信息查询{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+{% if posts %}<br />
+{% for item in posts %}
+
+<div class="char-item">
+    <span>名称: </span>
+    <span class="name">{{item['purchase_name']}}</span>
+    <br />
+
+    <span>价格: </span>
+    <span class="char-num">{{item['price']}}</span>
+    <br />
+
+    <span>原始价格: </span>
+    <span class="char-num">{{item['orig_price']}}</span>
+    <br />
+
+    <span>折扣开始时间: </span>
+    <span class="char-num">{{item['discount_from']}}</span>
+    <br />
+
+    <span>折扣结束时间: </span>
+    <span class="char-num">{{item['discount_to']}}</span>
+    <br />
+
+    <span>是否允许使用兑换券购买: </span>
+    <span class="char-num">{{item['discount_reason']}}</span>
+    <br />
+    {% if item['items'] %}<br />
+    {% for x in item['items'] %}
+    <span>物品ID: </span>
+    <span class="char-num">{{x['item_id']}}</span>
+    <br />
+
+    <span>物品类型: </span>
+    <span class="char-num">{{x['type']}}</span>
+    <br />
+
+    <span>数量: </span>
+    <span class="char-num">{{x['amount']}}</span>
+    <br />
+
+
+
+    {% if not loop.last %}
+    <br />
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+</div>
+{% if not loop.last %}
+<br />
+<hr />
+<br />
+{% endif %}
+{% endfor %}
+
+{% endif %}
+{% endblock %}

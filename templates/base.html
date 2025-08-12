@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} - Arkana Server</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="container">
+            <h1 class="logo"><strong>Arkana Server</strong></h1>
+            <ul class="nav-links">
+                {% if g.user %}
+                <li class="user-info">
+                    <span>管理员：{{ g.user['username'] }}</span>
+                </li>
+                <li><a href="{{ url_for('index.index') }}" class="nav-link">首页</a></li>
+                <li><a href="{{ url_for('login.logout') }}" class="nav-link">登出</a></li>
+                {% else %}
+                <li><a href="{{ url_for('login.login') }}" class="nav-link">登入</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <main class="container">
+        <section class="content-area">
+            <header class="section-header">
+                {% block header %}{% endblock %}
+            </header>
+            {% for message in get_flashed_messages() %}
+            <div class="flash-message">{{ message }}</div>
+            {% endfor %}
+            {% block content %}{% endblock %}
+        </section>
+    </main>
+    <footer id="footer" class="site-footer">
+            <p>Made by Lost@2020-2022</p>
+            <p>Modified by SweelLong(Swiro)@2025</p>
+            <a href="http://beian.miit.gov.cn">闽ICP备2025107746号</a>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block header %}
+<h1>{% block title %}导出定数表格{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+<form method="post">
+    <div class="title">直接读取database文件夹下的arcaea_database.db文件和songs/songlist文件</div>
+    <input type="submit" value="生成">
+</form>
+{% endblock %}

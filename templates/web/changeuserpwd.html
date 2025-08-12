@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block header %}
+<h1>{% block title %}用户密码修改{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+<form action="/web/changeuserpwd" method="post">
+    <div class="title"><strong>编辑用户密码</strong></div>
+    <label for="name">玩家用户名</label>
+    <input type="text" name="name" id="name">
+    <label for="user_code">玩家好友码</label>
+    <input type="text" name="user_code" id="user_code">
+    <p>二选一即可</p>
+    <br>
+    <hr>
+    <br>
+    <label for="pwd">输入新密码</label>
+    <input type="password" name="pwd" id="pwd" required>
+    <label for="pwd2">请再次输入</label>
+    <input type="password" name="pwd2" id="pwd2" required>
+    <input type="submit" value="编辑">
+</form>
+{% endblock %}

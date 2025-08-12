@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block header %}
+<h1>{% block title %}数据库更新{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+    <label for="name">旧数据库</label>
+    <input type="file" name="file">
+    <input type="submit" value="提交">
+</form>
+<div class="content">
+    这里可以将旧版本的数据库同步到新版本的数据库，并刷新用户拥有的全角色列表。<br />
+    可上传文件: arcaea_database.db<br />
+    新数据库不存在的数据会被添加，存在的重复数据也会被改变。<br /><br />
+</div>
+<br />
+<hr />
+<form action="/web/updatedatabase/refreshsonghash" method="post">
+    <div class="title">刷新歌曲哈希值</div>
+    <br />
+    <input type="submit" value="刷新">
+    <div class="content">这里可以刷新储存在数据库中的songs文件夹下所有文件的Hash值。目的是应对歌曲谱面文件的更新。</div>
+</form>
+<br />
+<hr />
+<form action="/web/updatedatabase/refreshsongrating" method="post">
+    <div class="title">刷新歌曲的评分</div>
+    <br />
+    <input type="submit" value="刷新">
+    <div class="content">这里可以刷新数据库中所有成绩的评分。目的是应对歌曲谱面定数的更新。</div>
+</form>
+<br />
+<hr />
+<form action="/web/updatedatabase/refreshsbundle" method="post">
+    <div class="title">更新热更新文件</div>
+    <br />
+    <input type="submit" value="刷新">
+    <div class="content">这里可以刷新储存在内存中的 bundle 文件夹下所有热更新文件的信息。目的是应对热更新文件的修改。</div>
+</form>
+{% endblock %}

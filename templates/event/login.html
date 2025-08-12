@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+{% extends "/event/base.html" %}
+{% block title %}登录{% endblock %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2>用户登录</h2>
+            <p>请输入您的账号信息</p>
+        </div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for message in messages %}
+            <div class="flash-message">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+        <form method="post" class="auth-form">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" name="username" required class="form-control" placeholder="请输入用户名">
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" required class="form-control" placeholder="请输入密码">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">登录</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

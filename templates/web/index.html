@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block header %}
+    <h1 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-gray-800">{% block title %}首页{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+    <div class="content-area space-y-8">
+        <div class="card">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">说明</h1>
+            <p class="text-gray-600">这是Arkana Server的后台管理系统<br>该项目代码由<a href="https://github.com/SweelLong" target="_blank">SweelLong(Swiro)</a>改自Lost-MSth的<a href="https://github.com/Lost-MSth/Arcaea-server" target="_blank">Arcaea-server</a>项目</p>
+        </div>
+        <div class="card">
+            <h2 class="text-xl font-bold text-gray-800 pb-2 border-b border-gray-200">游戏</h2>
+            <a href="{{ url_for('index.single_player_score') }}" class="btn btn-primary d-block">单个玩家成绩查询</a>
+            <a href="{{ url_for('index.single_player_ptt') }}" class="btn btn-primary d-block">单个玩家潜力值详情查询</a>
+            <a href="{{ url_for('index.all_player') }}" class="btn btn-primary d-block">所有玩家信息查询</a>
+            <a href="{{ url_for('index.all_song') }}" class="btn btn-primary d-block">谱面信息查询</a>
+            <a href="{{ url_for('index.all_character') }}" class="btn btn-primary d-block">角色信息查询</a>
+            <a href="{{ url_for('index.all_item') }}" class="btn btn-primary d-block">物品信息查询</a>
+            <a href="{{ url_for('index.all_purchase') }}" class="btn btn-primary d-block">购买信息查询</a>
+            <a href="{{ url_for('index.all_present') }}" class="btn btn-primary d-block">奖励信息查询</a>
+            <a href="{{ url_for('index.all_redeem') }}" class="btn btn-primary d-block">兑换码信息查询</a>
+            <a href="{{ url_for('index.single_chart_top') }}" class="btn btn-primary d-block">单个谱面排行榜查询</a>
+        </div>
+        <div class="card">
+            <h2 class="text-xl font-bold text-gray-800 pb-2 border-b border-gray-200">系统</h2>
+            <a href="{{ url_for('index.update_database') }}" class="btn btn-danger d-block">数据库更新</a>
+            <a href="{{ url_for('index.edit_userpwd') }}" class="btn btn-danger d-block">用户密码修改</a>
+            <a href="{{ url_for('index.ban_user') }}" class="btn btn-danger d-block">封禁用户</a>
+            <a href="{{ url_for('index.change_score') }}" class="btn btn-danger d-block">成绩删除</a>
+            <a href="{{ url_for('index.update_user_save') }}" class="btn btn-secondary d-block">用户存档更新</a>
+            <a href="{{ url_for('index.change_song') }}" class="btn btn-secondary d-block">歌曲修改</a>
+            <a href="{{ url_for('index.change_character') }}" class="btn btn-secondary d-block">角色修改</a>
+            <a href="{{ url_for('index.change_item') }}" class="btn btn-secondary d-block">物品信息修改</a>
+            <a href="{{ url_for('index.change_purchase') }}" class="btn btn-secondary d-block">购买信息修改</a>
+            <a href="{{ url_for('index.change_purchase_item') }}" class="btn btn-secondary d-block">购买信息的物品修改</a>
+            <a href="{{ url_for('index.change_user') }}" class="btn btn-secondary d-block">用户信息修改</a>
+            <a href="{{ url_for('index.change_user_purchase') }}" class="btn btn-secondary d-block">用户购买信息修改</a>
+            <a href="{{ url_for('index.change_present') }}" class="btn btn-secondary d-block">奖励修改</a>
+            <a href="{{ url_for('index.deliver_present') }}" class="btn btn-secondary d-block">奖励分发</a>
+            <a href="{{ url_for('index.change_redeem') }}" class="btn btn-secondary d-block">兑换码修改</a>
+        </div>
+        <div class="card">
+            <h2 class="text-xl font-bold text-gray-800 pb-2 border-b border-gray-200">其他</h2>
+            <a href="{{ url_for('user.index') }}" class="btn btn-success d-block">入服手册</a>
+            <a href="{{ url_for('user.news') }}" class="btn btn-success d-block">更新公告</a>
+            <a href="{{ url_for('user.viewing_textures') }}" class="btn btn-success d-block">材质展览</a>
+            <a href="{{ url_for('user.register') }}" class="btn btn-success d-block">注册账号</a>
+            <a href="{{ url_for('user.me') }}" class="btn btn-success d-block">个人中心</a>
+            <a href="{{ url_for('user.privacy_policy') }}" class="btn btn-success d-block">隐私政策</a>
+            <a href="{{ url_for('user.terms_of_service') }}" class="btn btn-success d-block">服务条款</a>
+            <a href="{{ url_for('index.getinvitecode') }}" class="btn btn-primary d-block">获取注册码</a>
+            <a href="{{ url_for('index.getchartconstexcel') }}" class="btn btn-primary d-block">导出定数表格</a>
+        </div>
+    </div>
+{% endblock %}

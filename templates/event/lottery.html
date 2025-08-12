@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+{% extends "/event/base.html" %}
+{% block title %}幸运抽奖{% endblock %}
+{% block content %}
+<div class="page-container lottery-container">
+    <div class="page-header">
+        <h2>幸运抽奖</h2>
+        <p>每位用户每天可参与一次抽奖</p>
+    </div>
+    <div class="lottery-card">
+        <div class="lottery-info">
+            <p>当前日期: {{ today }}</p>
+            {% if session.username %}
+            <p>当前用户: {{ session.username }}</p>
+            {% endif %}
+        </div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for message in messages %}
+            <div class="flash-message">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+        <div class="lottery-content">
+            <div class="lottery-image">
+                <img src="/static/event-illustration.jpg" alt="抽奖活动插图" class="illustration">
+            </div>
+            {% if has_drawn %}
+            <div class="lottery-result">
+                <h3>您已参与今日抽奖</h3>
+                {% if result %}
+                <p class="prize-result">您抽到的奖品是: {{ result }}</p>
+                {% endif %}
+                <p>请明天再来参与</p>
+            </div>
+            {% else %}
+            <form method="post" class="lottery-form">
+                <button type="submit" class="btn btn-lottery">
+                    点击抽奖
+                    <i class="fas fa-gift"></i>
+                </button>
+            </form>
+            {% endif %}
+        </div>
+        <div class="lottery-prizes">
+            <h4>奖品设置</h4>
+            <div class="prize-grid">
+                {% for prize in all_prizes %}
+                <div class="prize-item {% if not prize.is_available %}prize-unavailable{% endif %}">
+                    <div class="prize-name">
+                        {{ prize.name }}
+                        {% if prize.limited %}<span class="limited-badge">限量1个</span>{% endif %}
+                    </div>
+                    <div class="prize-prob">概率: {{ prize.prob }}</div>
+                    {% if not prize.is_available %}
+                    <div class="prize-status">已被领取</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="probability-rules">
+                <h5>概率规则说明</h5>
+                <ul>
+                    <li>限量奖品被领取后，所有人的获得其他奖品的概率增加1%</li>
+                    <li>个人获得《星辰》纪念banner后，自己获得其他奖品的概率额外增加37%</li>
+                    <li>限量奖品每种只有一份，先到先得！</li>
+                </ul>
+            </div>
+            <div class="prize-winners">
+                <h4>限量奖品获得者</h4>
+                <div class="winners-list">
+                    {% for winner in limited_winners %}
+                    <div class="winner-item">
+                        <div class="winner-prize">【{{ winner.prize_name }}】</div>
+                        <div class="winner-info">
+                            <span class="winner-name">{{ winner.user_name }}</span>
+                            <span class="winner-time">{{ winner.claimed_time }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

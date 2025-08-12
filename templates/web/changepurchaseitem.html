@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block header %}
+<h1>{% block title %}购买信息的物品修改{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<form action="/web/changepurchaseitem" method="post">
+    <div class="title">添加购买信息的物品</div>
+    <label for="purchase_name">购买信息的名称</label>
+    <input type="text" name="purchase_name" id="purchase_name" required>
+    <label for="item_id">物品的ID</label>
+    <input type="text" name="item_id" id="item_id" required>
+    <label for="type">类型</label>
+    <div>
+        <select name="type">
+            <option value="single" selected>Single song</option>
+            <option value="pack">Song pack</option>
+            <option value="world_song">World song</option>
+            <option value="character">Character</option>
+            <option value="core">Core</option>
+        </select>
+    </div>
+    <label for="amount">数量</label>
+    <input type="text" name="amount" id="amount" value="1" required>
+    <br />
+    <input type="submit" value="添加">
+</form>
+
+<form action="/web/changepurchaseitem/delete" method="post">
+    <div class="title">删除购买信息的物品</div>
+    <label for="purchase_name">购买信息的名称</label>
+    <input type="text" name="purchase_name" required>
+    <label for="item_id">物品的ID</label>
+    <input type="text" name="item_id" required>
+    <label for="type">类型</label>
+    <div>
+        <select name="type">
+            <option value="single" selected>Single</option>
+            <option value="pack">Pack</option>
+            <option value="world_song">World song</option>
+            <option value="character">Character</option>
+            <option value="core">Core</option>
+        </select>
+    </div>
+    <br />
+    <input type="submit" value="删除">
+</form>
+{% endblock %}

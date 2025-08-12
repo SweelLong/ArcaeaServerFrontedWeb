@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arkana半周年庆典</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: '#D4AF37',
+                        cream: '#FFFDD0',
+                        burgundy: '#800020',
+                        bronze: '#CD7F32',
+                        starry: '#1A0B51',
+                        floral: '#5A2B58',
+                    },
+                    fontFamily: {
+                        serif: ['Garamond', 'Georgia', 'Times New Roman', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            }
+            .text-shadow-lg {
+                text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+            }
+            .ornament-border {
+                position: relative;
+                border: 2px solid theme('colors.gold');
+            }
+            .ornament-border::before,
+            .ornament-border::after,
+            .ornament-border > span::before,
+            .ornament-border > span::after {
+                content: '';
+                position: absolute;
+                width: 18px;
+                height: 18px;
+                background-color: theme('colors.gold');
+                z-index: 1;
+            }
+            .ornament-border::before {
+                top: -5px;
+                left: -5px;
+                clip-path: polygon(0 0, 100% 100%, 0 100%);
+            }
+            .ornament-border::after {
+                top: -5px;
+                right: -5px;
+                clip-path: polygon(100% 0, 0 100%, 100% 100%);
+            }
+            .ornament-border > span::before {
+                bottom: -5px;
+                left: -5px;
+                clip-path: polygon(0 0, 100% 0, 0 100%);
+            }
+            .ornament-border > span::after {
+                bottom: -5px;
+                right: -5px;
+                clip-path: polygon(100% 0, 0 0, 100% 100%);
+            }
+            .vines {
+                position: relative;
+                overflow: hidden;
+            }
+            .vines::before,
+            .vines::after {
+                content: '';
+                position: absolute;
+                width: 40px;
+                height: 100%;
+                background-size: contain;
+                background-repeat: repeat-y;
+                opacity: 0.6;
+                z-index: 1;
+            }
+            .vines::before {
+                left: 0;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 48' fill='none'%3E%3Cpath d='M12,0 C18,10 6,20 12,30 C18,40 6,48 12,48' stroke='%23D4AF37' stroke-width='2' fill='none'/%3E%3Ccircle cx='12' cy='10' r='2' fill='%23D4AF37'/%3E%3Ccircle cx='12' cy='30' r='2' fill='%23D4AF37'/%3E%3Ccircle cx='12' cy='45' r='2' fill='%23D4AF37'/%3E%3C/svg%3E");
+                animation: vineMove 20s linear infinite;
+            }
+            .vines::after {
+                right: 0;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 48' fill='none'%3E%3Cpath d='M12,0 C6,10 18,20 12,30 C6,40 18,48 12,48' stroke='%23D4AF37' stroke-width='2' fill='none'/%3E%3Ccircle cx='12' cy='10' r='2' fill='%23D4AF37'/%3E%3Ccircle cx='12' cy='30' r='2' fill='%23D4AF37'/%3E%3Ccircle cx='12' cy='45' r='2' fill='%23D4AF37'/%3E%3C/svg%3E");
+                animation: vineMove 25s linear infinite reverse;
+            }
+            @keyframes vineMove {
+                0% { background-position: 0 0; }
+                100% { background-position: 0 96px; }
+            }
+            .particle {
+                position: absolute;
+                width: 10px;
+                height: 10px;
+                background-color: rgba(255, 253, 208, var(--opacity, 0.6));
+                border-radius: 50%;
+                pointer-events: none;
+                animation: float var(--duration, 10s) linear infinite;
+                box-shadow: 0 0 8px rgba(255, 253, 208, var(--opacity, 0.6));
+            }
+            .particle.star {
+                background-color: rgba(255, 215, 0, var(--opacity, 0.8));
+                box-shadow: 0 0 12px rgba(255, 215, 0, 0.8);
+            }
+            .particle.flower {
+                border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+                background-color: rgba(230, 100, 200, var(--opacity, 0.5));
+                box-shadow: 0 0 10px rgba(230, 100, 200, var(--opacity, 0.5));
+            }
+            @keyframes float {
+                0% {
+                    transform: translateY(-10vh) translateX(0) rotate(0deg);
+                    opacity: var(--start-opacity, 0.8);
+                }
+                50% {
+                    transform: translateY(50vh) translateX(var(--x-offset, 50px)) rotate(180deg);
+                    opacity: calc(var(--start-opacity, 0.8) * 0.6); 
+                }
+                100% {
+                    transform: translateY(110vh) translateX(0) rotate(360deg);
+                    opacity: var(--end-opacity, 0.2);
+                }
+            }
+            .bg-move {
+                animation: bgShift 40s ease-in-out infinite alternate;
+            }
+            @keyframes bgShift {
+                0% { background-position: 50% 50%; }
+                100% { background-position: 55% 45%; }
+            }
+            .btn-pulse {
+                animation: pulse 4s infinite;
+            }
+            @keyframes pulse {
+                0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+                70% { box-shadow: 0 0 0 12px rgba(212, 175, 55, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+            }
+            .fade-in {
+                opacity: 0;
+                transform: translateY(20px);
+                transition: opacity 1s ease-out, transform 1s ease-out;
+            }
+            .fade-in.visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            .prize-card {
+                transition: all 0.5s ease;
+            }
+            .prize-card:hover {
+                transform: translateY(-10px) scale(1.02);
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            }
+        }
+    </style>
+</head>
+<body class="font-serif overflow-x-hidden bg-starry">
+    <div class="relative w-full min-h-screen bg-cover bg-center bg-move"
+        style="background-image: url('/static/event.png'); max-width: 100%; height: 120vh;">
+        <audio id="bg-audio"><source src="/static/event.mp3" type="audio/mp3"></audio>
+        <button id="audio-btn" class="absolute top-4 right-4 z-20 bg-starry/60 backdrop-blur-sm text-cream text-xl px-4 py-2 rounded-sm transition-all duration-700 hover:bg-starry/80">
+            <i class="fa fa-play" id="audio-icon"></i>
+        </button>
+        <div id="particles" class="absolute inset-0 w-full h-full pointer-events-none"></div>
+        <div class="vines absolute inset-0 w-full h-full pointer-events-none"></div>
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-gold to-transparent"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-gold to-transparent"></div>
+        <div class="relative z-10 w-full min-h-screen flex flex-col justify-center items-center px-4 py-16">
+            <h1 class="text-[clamp(2rem,8vw,5rem)] font-bold text-cream text-shadow-lg mb-6 transform transition-all duration-1000 hover:scale-105 tracking-wide">
+                Arkana 半周年
+            </h1>
+            <p class="text-[clamp(1.2rem,4vw,2rem)] text-gold text-shadow mb-16">感谢庆典 · 星花共舞</p>
+            <div class="flex flex-col md:flex-row gap-8 md:gap-20 w-full max-w-4xl justify-center mt-10">
+                <a href="/event/lottery">
+                    <button class="ornament-border group relative px-10 py-5 bg-starry/60 backdrop-blur-sm
+                               text-cream text-xl md:text-2xl rounded-sm transition-all duration-700
+                               hover:bg-starry/80 hover:scale-110 btn-pulse">
+                        <span></span>
+                        <span class="flex items-center gap-3">
+                            <i class="fa fa-gift text-gold transition-transform duration-700 group-hover:rotate-12"></i>
+                            参与抽奖
+                        </span>
+                    </button>
+                </a>
+                <a href="/event/contribution">
+                    <button class="ornament-border group relative px-10 py-5 bg-floral/60 backdrop-blur-sm
+                               text-cream text-xl md:text-2xl rounded-sm transition-all duration-700
+                               hover:bg-floral/80 hover:scale-110 btn-pulse" style="animation-delay: 1.5s;">
+                        <span></span>
+                        <span class="flex items-center gap-3">
+                            <i
+                                class="fa fa-music text-gold transition-transform duration-700 group-hover:rotate-12"></i>
+                            谱面公募
+                        </span>
+                    </button>
+                </a>
+            </div>
+            <div class="mt-24 mb-12 w-full max-w-3xl text-center fade-in">
+                <p class="text-cream/90 text-lg md:text-xl leading-relaxed mb-8">向下探寻，解锁更多庆典惊喜</p>
+                <div class="animate-bounce text-cream/80">
+                    <i class="fa fa-chevron-down text-2xl md:text-3xl"></i>
+                </div>
+            </div>
+            <div class="w-32 h-px bg-gradient-to-r from-transparent via-gold to-transparent my-12 fade-in"></div>
+            <div class="w-full max-w-4xl mt-10 p-8 bg-starry/50 backdrop-blur-md rounded-sm border border-gold/30 transform transition-all duration-1000 hover:border-gold/70 hover:shadow-[0_0_30px_rgba(212,175,55,0.2)] fade-in">
+                <h2 class="text-cream text-2xl md:text-3xl mb-6 text-shadow border-b border-gold/30 pb-2">《星辰与花海》庆典开启</h2>
+                <p class="text-cream/90 leading-relaxed mb-6 text-lg">
+                    时光流转，感恩相伴。值此半周年之际，Arkana为您献上「星辰与花海」主题庆典活动，
+                    多重惊喜与丰厚礼遇，邀您共赴这场星光璀璨的盛宴。
+                </p>
+                <div class="flex flex-col md:flex-row gap-6 my-10">
+                    <div class="flex-1 p-5 bg-starry/40 rounded border border-gold/20 prize-card">
+                        <h3 class="text-gold text-xl mb-3 flex items-center">
+                            <i class="fa fa-calendar mr-2"></i> 活动时间
+                        </h3>
+                        <p class="text-cream/90">2025年8月10日 至 2025年8月23日</p>
+                    </div>
+                    <div class="flex-1 p-5 bg-floral/40 rounded border border-gold/20 prize-card">
+                        <h3 class="text-gold text-xl mb-3 flex items-center">
+                            <i class="fa fa-map-marker mr-2"></i> 参与方式
+                        </h3>
+                        <p class="text-cream/90">网页端每日登录即可参与</p>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full max-w-4xl mt-10 p-8 bg-starry/50 backdrop-blur-md rounded-sm border border-gold/30 transform transition-all duration-1000 hover:border-gold/70 hover:shadow-[0_0_30px_rgba(212,175,55,0.2)] fade-in">
+                <h2 class="text-cream text-2xl md:text-3xl mb-6 text-shadow border-b border-gold/30 pb-2">庆典奖池 · 星光闪耀</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-5 bg-starry/30 rounded border border-gold/20 prize-card">
+                        <h3 class="text-gold text-lg mb-2">精美周边</h3>
+                        <ul class="text-cream/90 space-y-2">
+                            <li class="flex items-center"><i class="fa fa-diamond text-gold/70 mr-2"></i> sense of wonder 吧唧</li>
+                            <li class="flex items-center"><i class="fa fa-diamond text-gold/70 mr-2"></i> 克丽斯腾 流麻</li>
+                            <li class="flex items-center"><i class="fa fa-diamond text-gold/70 mr-2"></i> 克丽斯腾 票根</li>
+                        </ul>
+                    </div>
+                    <div class="p-5 bg-floral/30 rounded border border-gold/20 prize-card">
+                        <h3 class="text-gold text-lg mb-2">限定奖励</h3>
+                        <ul class="text-cream/90 space-y-2">
+                            <li class="flex items-center"><i class="fa fa-star text-gold/70 mr-2"></i> 限时获取 banner-《星辰》</li>
+                            <li class="flex items-center"><i class="fa fa-star text-gold/70 mr-2"></i> 500 枚虚实构想</li>
+                            <li class="flex items-center"><i class="fa fa-star text-gold/70 mr-2"></i> 限时搭档 - 克丽斯腾</li>
+                        </ul>
+                    </div>
+                </div>
+                <p class="text-cream/80 mt-6 italic">
+                    奖品丰厚，每日参与机会不容错过，愿星光眷顾每一位参与者
+                </p>
+            </div>
+            <div class="w-full max-w-4xl mt-10 p-8 bg-floral/50 backdrop-blur-md rounded-sm border border-gold/30 transform transition-all duration-1000 hover:border-gold/70 hover:shadow-[0_0_30px_rgba(212,175,55,0.2)] fade-in">
+                <h2 class="text-cream text-2xl md:text-3xl mb-6 text-shadow border-b border-gold/30 pb-2">谱面公募 · 音动花海</h2>
+                <p class="text-cream/90 leading-relaxed mb-6">
+                    庆典期间，我们将举办谱面公募活动，诚邀各位音乐爱好者共谱乐章。
+                    本次曲目为克丽斯腾EP - <span class="text-gold italic">"I Will Touch the Sky"</span>
+                </p>
+                <div class="p-5 bg-floral/30 rounded border border-gold/20 mb-6 prize-card">
+                    <h3 class="text-gold text-lg mb-3">活动详情</h3>
+                    <ul class="text-cream/90 space-y-3">
+                        <li class="flex items-start">
+                            <i class="fa fa-music text-gold/70 mr-2 mt-1"></i>
+                            <span>参与时间：即日起至8月23日</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-trophy text-gold/70 mr-2 mt-1"></i>
+                            <span>获胜奖励：34+评分 × 2元</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="w-full max-w-4xl mt-10 p-8 bg-gradient-to-r from-starry/50 to-floral/50 backdrop-blur-md rounded-sm border border-gold/30 transform transition-all duration-1000 hover:border-gold/70 hover:shadow-[0_0_30px_rgba(212,175,55,0.2)] fade-in">
+                <h2 class="text-cream text-2xl md:text-3xl mb-6 text-shadow border-b border-gold/30 pb-2">庆典福利 · 感恩回馈</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-5 bg-starry/30 rounded border border-gold/20 prize-card">
+                        <div class="text-gold text-4xl mb-3"><i class="fa fa-picture-o"></i></div>
+                        <h3 class="text-gold text-lg mb-2">限时banner</h3>
+                        <p class="text-cream/90">活动期间，无需抽奖即可获得限定banner - 《花海》，为您的收藏增添一抹亮色。</p>
+                    </div>
+                    <div class="p-5 bg-floral/30 rounded border border-gold/20 prize-card">
+                        <div class="text-gold text-4xl mb-3"><i class="fa fa-users"></i></div>
+                        <h3 class="text-gold text-lg mb-2">限时搭档</h3>
+                        <p class="text-cream/90">通过活动爬梯，即可获取限时搭档 - 克丽斯腾，与您共庆半周年盛典。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full max-w-4xl mt-16 p-6 text-center fade-in">
+                <p class="text-cream/90 text-lg md:text-xl italic mb-8">
+                    感谢每一位旅人的一路陪伴，你们的支持是我们前行的星光
+                </p>
+                <p class="text-cream/90 text-lg md:text-xl mb-12">
+                    我们将继续努力，创造更多美好与感动
+                </p>
+                <div class="text-gold text-xl font-bold">
+                    Arkana with Arenae and Arcafe
+                    <p>Copyright © 2025 Arkana Team. Pages Designed by Swiro.</p>
+                </div>
+            </div>
+            <div class="h-32 md:h-64"></div>
+        </div>
+    </div>
+    <script>
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 80; 
+            particlesContainer.innerHTML = '';
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                if (Math.random() > 0.5) {
+                    particle.classList.add('star');
+                } else {
+                    particle.classList.add('flower');
+                }
+                const size = Math.random() * 10 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                const duration = Math.random() * 20 + 10;
+                particle.style.setProperty('--duration', `${duration}s`);
+                const startOpacity = Math.random() * 0.6 + 0.2;
+                const endOpacity = Math.random() * 0.2;
+                particle.style.setProperty('--start-opacity', startOpacity);
+                particle.style.setProperty('--end-opacity', endOpacity);
+                particle.style.setProperty('--opacity', startOpacity);
+                const xOffset = (Math.random() - 0.5) * 150;
+                particle.style.setProperty('--x-offset', `${xOffset}px`);
+                particle.style.animationDelay = `${Math.random() * 15}s`;
+                particlesContainer.appendChild(particle);
+            }
+        }
+        function handleScrollAnimations() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+        window.addEventListener('load', () => {
+            alert('欢迎来到Arkana半周年庆典！(请双击页面任意一处)');
+            const audioBtn = document.getElementById('audioBtn');
+            audioBtn.click();
+            createParticles();
+            handleScrollAnimations();
+            const title = document.querySelector('h1');
+            setTimeout(() => {
+                title.style.opacity = '1';
+            }, 300);
+        });
+        window.addEventListener('resize', createParticles);
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const bgElement = document.querySelector('.bg-move');
+            bgElement.style.backgroundPositionY = `${scrollY * 0.4}px`;
+            handleScrollAnimations();
+            const particles = document.querySelectorAll('.particle');
+            particles.forEach((particle) => {
+                const opacityFactor = Math.max(0.3, 1 - (scrollY / 3000));
+                particle.style.opacity = opacityFactor;
+            });
+        });
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                button.classList.add('scale-95');
+                setTimeout(() => {
+                    button.classList.remove('scale-95');
+                }, 200);
+            });
+        });
+        // 因为现在浏览器基本都不支持自动播放，就要用点奇技淫巧了...
+        // 但是滚轮事件似乎也不会触发，属于弱条件了，新版浏览器限制还是很多的
+        // 可以肯定的是点击事件是一定会触发的，此外手机端滑动也会触发
+        const bgAudio = document.getElementById('bg-audio');
+        const audioBtn = document.getElementById('audio-btn');
+        const audioIcon = document.getElementById('audio-icon');
+        let isPlaying = false;
+        const events = [
+            'click',
+            'mouseover',
+            'mouseout',
+            'mousemove',
+            'mousedown',
+            'touchmove',
+            'touchstart',
+            'keydown',
+            'wheel',
+            'scroll',
+            'focus',
+            'blur',
+            'contextmenu',
+            'drag',
+            'dragend',
+            'dragenter',
+            'dragleave',
+            'dragover',
+            'dragstart',
+            'drop',
+        ];
+        events.forEach(eventType => {
+            document.addEventListener(eventType, () => {
+                bgAudio.play();
+                audioIcon.classList.remove('fa-play');
+                audioIcon.classList.add('fa-pause');
+            });
+        });
+    </script>
+</body>
+</html>

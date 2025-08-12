@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} - Arkana</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='userbase.css') }}">
+</head>
+
+<body>
+    <nav class="main-nav" style="background-color: rgba(255, 255, 255, 0.2);">
+        <h1 class="logo"><strong>Arkana</strong></h1>
+        <button class="menu-toggle" aria-label="打开菜单">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+        <ul class="nav-links">
+            <li><a href="index">入服手册</a></li>
+            <li><a href="news">游戏公告</a></li>
+            <li><a href="viewing_textures">材质展览</a></li>
+            <li><a href="register">注册账号</a></li>
+            <li><a href="me">个人中心</a></li>
+        </ul>
+        </div>
+    </nav>
+    {% block rebuildmaincontent %}
+    <main class="container content-area" style="min-height: 100vh;">
+        <header class="section-header">
+            {% block header %}{% endblock %}
+            <p class="logo">{% block description %}{% endblock %}</p>
+        </header>
+        {% for message in get_flashed_messages() %}
+        <div class="flash-message">{{ message }}</div>
+        {% endfor %}
+        {% block content %}{% endblock %}
+
+    </main>
+    {% endblock %}
+    <footer id="footer" class="site-footer">
+        <p><a href="https://sweellong.github.io">SweelLong(Swiro)'s Blog</a></p>
+        <p>Copyright © 2025 SweelLong(Swiro)</p>
+        <p><a href="privacy_policy">隐私政策</a>&nbsp;<a href="terms_of_service">服务条款</a></p>
+    </footer>
+    <script>
+        // 汉堡菜单交互逻辑
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navLinks = document.querySelector('.main-nav .nav-links');
+
+            if (menuToggle && navLinks) {
+                // 切换菜单状态
+                menuToggle.addEventListener('click', function () {
+                    this.classList.toggle('active');
+                    navLinks.classList.toggle('active');
+                    document.body.classList.toggle('menu-open');
+                });
+
+                // 点击导航链接后关闭菜单（移动端）
+                const links = navLinks.querySelectorAll('a');
+                links.forEach(link => {
+                    link.addEventListener('click', function () {
+                        if (window.innerWidth <= 768) {
+                            menuToggle.classList.remove('active');
+                            navLinks.classList.remove('active');
+                            document.body.classList.remove('menu-open');
+                        }
+                    });
+                });
+
+                // 窗口大小变化时重置菜单状态
+                window.addEventListener('resize', function () {
+                    if (window.innerWidth > 768) {
+                        menuToggle.classList.remove('active');
+                        navLinks.classList.remove('active');
+                        document.body.classList.remove('menu-open');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

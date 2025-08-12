@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block header %}
+<h1>{% block title %}歌曲修改{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+<form action="/web/changesong/addsong" method="post">
+    <div class="title"><strong>添加歌曲</strong></div>
+    <label for="sid">歌曲ID</label>
+    <input type="text" name="sid" id="sid" required>
+    <label for="name_en">歌曲名称</label>
+    <input type="text" name="name_en" id="name_en" required>
+    <label for="rating_pst">Past 定数</label>
+    <input type="text" name="rating_pst" id="rating_pst" required>
+    <label for="rating_prs">Present 定数</label>
+    <input type="text" name="rating_prs" id="rating_prs" required>
+    <label for="rating_ftr">Future 定数</label>
+    <input type="text" name="rating_ftr" id="rating_ftr" required>
+    <label for="rating_byd">Beyond 定数</label>
+    <input type="text" name="rating_byd" id="rating_byd" required>
+    <label for="rating_etr">Eternal 定数</label>
+    <input type="text" name="rating_etr" id="rating_etr" required>
+    <div class="content">如果没有某个谱面，应该填入-1。</div>
+    <input type="submit" value="添加">
+</form>
+<br>
+<hr />
+<form action="/web/changesong/deletesong" method="post">
+    <div class="title"><strong>删除歌曲</strong></div>
+    <label for="sid">歌曲ID</label>
+    <input type="text" name="sid" required>
+    <input type="submit" value="删除">
+</form>
+{% endblock %}

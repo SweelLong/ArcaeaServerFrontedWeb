@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block header %}
+<h1>{% block title %}物品信息修改{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<form action="/web/changeitem" method="post">
+    <div class="title">添加物品信息</div>
+    <label for="item_id">物品ID</label>
+    <input type="text" name="item_id" id="item_id" required>
+    <label for="type">类型</label>
+    <div>
+        <select name="type">
+            <option value="single" selected>Single</option>
+            <option value="pack">Pack</option>
+            <option value="world_song">World song</option>
+            <option value="character">Character</option>
+        </select>
+    </div>
+    <br />
+    <div><label for="is_available">是否可用</label>
+        <br />
+        <br />
+        <label><input type="radio" name="is_available" checked value="1">对的</label>
+        <br />
+        <label><input type="radio" name="is_available" value="0">错的</label>
+    </div>
+    <br />
+    <input type="submit" value="添加">
+</form>
+<form action="/web/changeitem/delete" method="post">
+    <div class="title">删除物品</div>
+    <label for="item_id">物品ID</label>
+    <input type="text" name="item_id" required>
+    <label for="type">类型</label>
+    <div>
+        <select name="type">
+            <option value="single" selected>Single</option>
+            <option value="pack">Pack</option>
+            <option value="world_song">World song</option>
+            <option value="character">Character</option>
+        </select>
+    </div>
+    <br />
+    <input type="submit" value="删除">
+</form>
+{% endblock %}

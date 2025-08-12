@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block header %}
+<h1>{% block title %}用户存档更新{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+<form action="/web/updateusersave" method="post">
+    <div class="title">更新一个用户的存档到数据库中</div>
+    <label for="name">玩家用户名</label>
+    <input type="text"  name="name" id="name">
+    <label for="user_code">玩家好友码</label>
+    <input type="text"  name="user_code" id="user_code">
+    <p>二选一即可</p>
+    <input type="submit" value="更新">
+</form>
+<br />
+<hr />
+<form action="/web/updateusersave" method="post">
+    <div class="title">更所所有用户的存档到数据库中</div>
+    <br />
+    <input type="submit" value="更新所有">
+    <div class="content">这会将用户上传的存档覆盖到best_score表中，请注意是覆盖，不会进行分数比较。</div>
+</form>
+{% endblock %}

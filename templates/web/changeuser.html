@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block header %}
+<h1>{% block title %}用户信息修改{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+<form action="/web/changeuser/edituser" method="post">
+    <div class="title">编辑玩家</div>
+    <label for="name">玩家用户名</label>
+    <input type="text" name="name" id="name">
+    <label for="user_code">玩家好友码</label>
+    <input type="text" name="user_code" id="user_code">
+    <p>二选一即可</p>
+    <br>
+    <br>
+    <label for="ticket">记忆源点</label>
+    <input type="text" name="ticket">
+    <br>
+    <div class="content">如果某些不需要修改，留空即可</div>
+    <div class="content">目前只支持修改记忆源点</div>
+    <input type="submit" value="Edit">
+</form>
+<br>
+<hr>
+<form action="/web/changeuser/edituser" method="post">
+    <div class="title">编辑所有玩家</div>
+    <label for="ticket">记忆源点</label>
+    <input type="text" name="ticket">
+    <br>
+    <input type="submit" value="编辑全部">
+</form>
+{% endblock %}

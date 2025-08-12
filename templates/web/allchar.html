@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block header %}
+<h1>{% block title %}角色信息查询{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+{% if posts %}<br />
+{% for char in posts %}
+
+<div class="char-item">
+    <span>ID: </span>
+    <span class="char-id">{{char['character_id']}}</span>
+    <br />
+
+    <span>名称: </span>
+    <span class="char-name">{{char['name']}}</span>
+    <br />
+
+    <span>最高等级: </span>
+    <span class="char-num">{{char['max_level']}}</span>
+    <br />
+
+    <span>1级残片值: </span>
+    <span class="char-num">{{char['frag1']}}</span>
+    <br />
+
+    <span>1级世界步数: </span>
+    <span class="char-num">{{char['prog1']}}</span>
+    <br />
+
+    <span>1级byd步数: </span>
+    <span class="char-num">{{char['overdrive1']}}</span>
+    <br />
+
+    <span>20级残片值: </span>
+    <span class="char-num">{{char['frag20']}}</span>
+    <br />
+
+    <span>20级世界步数: </span>
+    <span class="char-num">{{char['prog20']}}</span>
+    <br />
+
+    <span>20级byd步数: </span>
+    <span class="char-num">{{char['overdrive20']}}</span>
+    <br />
+
+    <span>30级残片值: </span>
+    <span class="char-num">{{char['frag30']}}</span>
+    <br />
+
+    <span>30级世界步数: </span>
+    <span class="char-num">{{char['prog30']}}</span>
+    <br />
+
+    <span>30级byd步数: </span>
+    <span class="char-num">{{char['overdrive30']}}</span>
+    <br />
+
+    <span>技能ID: </span>
+    <span class="char-num">{{char['skill_id']}}</span>
+    <br />
+
+    <span>技能解锁等级: </span>
+    <span class="char-num">{{char['skill_unlock_level']}}</span>
+    <br />
+
+    <span>觉醒后的技能ID: </span>
+    <span class="char-num">{{char['skill_id_uncap']}}</span>
+    <br />
+
+    <span>无需觉醒: </span>
+    <span class="char-num">{{char['is_uncapped']}}</span>
+    <br />
+
+
+
+
+</div>
+{% if not loop.last %}
+<br />
+<hr />
+<br />
+{% endif %}
+{% endfor %}
+
+{% endif %}
+{% endblock %}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block header %}
+<h1>{% block title %}成绩删除{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+<form action="/web/changescore/delete" method="post">
+    <div class="title"><strong>删除分数</strong></div>
+    <label for="sid">歌曲ID</label>
+    <input type="text" name="sid" id="sid">
+    <label for="difficulty">难度</label>
+    <select name="difficulty" id="difficulty">
+        <option value="-1" selected>All</option>
+        <option value="0">Past</option>
+        <option value="1">Present</option>
+        <option value="2">Future</option>
+        <option value="3">Beyond</option>
+    </select>
+    <br />
+    <label for="name">玩家用户名</label>
+    <input type="text" name="name" id="name">
+    <label for="user_code">玩家好友码</label>
+    <input type="text" name="user_code" id="user_code">
+    <p>二选一即可</p>
+    <br />
+    <br />
+    <div class="content">上述三项是查询参数，如果留空，则被认为是全部，都不填则认为是错误的。</div>
+    <br />
+    <br />
+    <input type="submit" value="删除">
+</form>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block header %}
+<h1>{% block title %}获取注册码{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+<!-- 单个生成区域 -->
+<form method="post">
+    <div class="title">单个QQ号生成仅今日可用的注册码</div>
+    <label for="qqid">QQ号码</label>
+    <input type="text" name="qqid" id="qqid">
+    <input type="submit" name="action" value="单个生成">
+</form>
+
+<!-- 批量生成区域 -->
+<form method="post" enctype="multipart/form-data">
+    <div class="title">批量从Excel生成注册码</div>
+    <label for="excel_file">Excel文件</label>
+    <input type="file" name="excel_file" id="excel_file" accept=".xlsx,.xls" required>
+    
+    <label for="sheet_name">工作表名称</label>
+    <input type="text" name="sheet_name" id="sheet_name" required>
+    
+    <label for="target_col">QQ号码所在列名</label>
+    <input type="text" name="target_col" id="target_col" required>
+    
+    <input type="submit" name="action" value="批量生成">
+</form>
+
+{% if batch_results %}
+<div class="batch-results">
+    <h3>批量生成结果</h3>
+    <table>
+        <tr>
+            <th>QQ号码</th>
+            <th>注册码</th>
+        </tr>
+        {% for qq, code in batch_results.items() %}
+        <tr>
+            <td>{{ qq }}</td>
+            <td>{{ code }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
+{% endblock %}

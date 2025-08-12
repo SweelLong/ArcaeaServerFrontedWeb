@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block header %}
+<h1>{% block title %}奖励分发{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+<form action="/web/deliverpresent" method="post">
+    <div class="title">分发给玩家</div>
+    <label for="name">玩家用户名</label>
+    <input type="text" name="name" id="name">
+    <label for="user_code">玩家用户码</label>
+    <input type="text" name="user_code" id="user_code">
+    <p>二选一即可</p>
+    <br>
+    <br>
+    <label for="present_id">奖励ID</label>
+    <input type="text" name="present_id" required>
+    <br>
+    <input type="submit" value="编辑">
+</form>
+<br>
+<hr>
+<br>
+<form action="/web/deliverpresent" method="post">
+    <div class="title">分发奖励给所有玩家</div>
+    <label for="present_id">奖励ID</label>
+    <input type="text" name="present_id" required>
+    <input type="submit" value="编辑全部">
+</form>
+{% endblock %}

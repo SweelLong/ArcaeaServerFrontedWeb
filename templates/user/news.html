@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+{% extends 'userbase.html' %}
+{% block header %}
+<h1>{% block title %}游戏公告{% endblock %}</h1>
+{% endblock %}
+
+{% block description %}
+Arkana 游戏公告！？
+{% endblock %}
+
+{% block content %}
+<div class="news-container">
+    {% for item in news_items %}
+    <details class="news-card">
+        <summary class="news-header">
+            <div class="news-title">
+                <a href="news/{{item.filename}}">{{ item.title }}</a>
+            </div>
+        </summary>
+        <div class="news-date" style="text-align: center">
+            {{ item.datetime.strftime('%Y年%m月%d日 %H:%M') }}
+        </div>
+        <div class="news-content">
+            {{ item.content_html|safe }}
+        </div>
+    </details>
+    {% else %}
+    <div class="no-news">暂无公告内容</div>
+    {% endfor %}
+</div>
+
+<style>
+    .news-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        gap: 15px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .news-card {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        background-color: #fff;
+    }
+
+    .news-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .news-header {
+        padding: 15px 20px;
+        cursor: pointer;
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f8f9fa;
+    }
+
+    .news-header::-webkit-details-marker {
+        display: none;
+    }
+
+    .news-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .news-title a {
+        color: #333;
+        text-decoration: none;
+    }
+
+    .news-title a:hover {
+        color: #007bff;
+        text-decoration: underline;
+    }
+
+    .news-date {
+        font-size: 0.9rem;
+        color: #666;
+        white-space: nowrap;
+    }
+
+    .news-content {
+        padding: 20px;
+        border-top: 1px solid #e0e0e0;
+        line-height: 1.6;
+        color: #444;
+    }
+
+    .news-content h1 {
+        font-size: 1.5rem;
+        margin: 1rem 0;
+    }
+
+    .news-content h2 {
+        font-size: 1.3rem;
+        margin: 0.8rem 0;
+    }
+
+    .news-content p {
+        margin: 0.8rem 0;
+    }
+
+    .news-content ul,
+    .news-content ol {
+        margin: 0.8rem 0 0.8rem 2rem;
+    }
+
+    .news-content img {
+        max-width: 100%;
+        height: auto;
+        margin: 1rem 0;
+    }
+
+    .no-news {
+        text-align: center;
+        padding: 40px;
+        color: #888;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+{% extends 'userbase.html' %}
+{% block header %}
+<h1>{% block title %}成为讲述者{% endblock %}</h1>
+{% endblock %}
+
+{% block description %}
+讲述者，你好呀！Arkana 如星尘织就的秘境请柬，静候你落笔开启奇幻。
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="auth-form-container">
+        <form method="post" class="auth-form">
+            <h2 class="section-title">启境之仪</h2>
+            
+            <div class="form-group">
+                <label for="username">秘境代号(用户名)：</label>
+                <input type="text" name="username" id="username" required class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">秘钥符文(密码)：</label>
+                <input type="password" name="password" id="password" required class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="invite_code">次元请柬(临时密钥)：</label>
+                <input type="password" name="invite_code" id="invite_code" required class="form-control">
+            </div>
+            
+            <div class="invite-link">
+                <a href="me">忘记密码？</a>
+            </div>
+            
+            <input type="submit" value="启境之仪(注册)" class="btn">
+        </form>
+    </div>
+</div>
+{% endblock %}

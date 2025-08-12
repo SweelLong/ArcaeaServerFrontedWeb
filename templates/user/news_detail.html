@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+{% extends 'userbase.html' %}
+{% block header %}
+<h1>{% block title %}{{ news_item.title }}{% endblock %}</h1>
+{% endblock %}
+
+{% block description %}
+Arkana 更新公告详情
+{% endblock %}
+
+{% block content %}
+<div class="news-detail-container">
+    <div class="news-detail-header">
+        <div class="news-detail-date">
+            {{ news_item.datetime.strftime('%Y年%m月%d日 %H:%M') }}
+        </div>
+        <a href="../news" class="back-link">← 返回公告列表</a>
+    </div>
+    <div class="news-detail-content">
+        {{ news_item.content_html|safe }}
+    </div>
+</div>
+
+<style>
+    .news-detail-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .news-detail-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .news-detail-date {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .back-link {
+        color: #007bff;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+
+    .news-detail-content {
+        line-height: 1.8;
+        color: #444;
+    }
+
+    .news-detail-content h1 {
+        font-size: 1.8rem;
+        margin: 1.5rem 0;
+    }
+
+    .news-detail-content h2 {
+        font-size: 1.5rem;
+        margin: 1.2rem 0;
+    }
+
+    .news-detail-content p {
+        margin: 1rem 0;
+    }
+
+    .news-detail-content ul,
+    .news-detail-content ol {
+        margin: 1rem 0 1rem 2rem;
+    }
+
+    .news-detail-content img {
+        max-width: 100%;
+        height: auto;
+        margin: 1.5rem 0;
+    }
+</style>
+{% endblock %}
