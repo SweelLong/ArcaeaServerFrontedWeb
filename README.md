@@ -11,6 +11,6 @@ tools文件夹下提供部分可能有帮助的脚本：
 
 - ToStandardOGG：批量重新编码OGG文件
 
--bundle_patcher：懒人专用快速生成bundle追加热更新
+- bundle_patcher：懒人专用快速生成bundle追加热更新
 
 - 批量生成指定曲包的下载曲目文件夹_CMD_PYTHON命令使用：快速制作dl文件夹
